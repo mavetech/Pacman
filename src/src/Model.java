@@ -125,9 +125,43 @@ public class Model extends JPanel implements ActionListener {
     }
 
     private void initGame() {
+        lives = 3;
+        score = 0;
+        initLevel();
+        N_GHOSTS = 6;
+        currentSpeed = 3;
     }
 
+    private void initLevel() {
+        for(int i=0;i<N_BLOCKS*N_BLOCKS;i++){
+            screenData[i] = levelData[i];
+        }
+    }
 
+    // defines position of ghosts
+    private void continueLevel(){
+        int dx = 1;
+        int random;
+        for(int i=0;i<N_GHOSTS;i++){
+            ghost_y[i] = 4 *  BLOCK_SIZE;
+            ghost_x[i] = 4 *  BLOCK_SIZE;
+            ghost_dy[i] = 0;
+            ghost_dx[i] = dx;
+            dx = -dx;
+            random = (int) Math.random() * (currentSpeed + 1);
+            if(random > currentSpeed){
+                random = currentSpeed;
+            }
+            ghostSpeed[i] = validspeeds[random];
+        }
+        pacman_x = 7 * BLOCK_SIZE;
+        pacman_y = 11 * BLOCK_SIZE;
+        pacman_dx = 0;
+        pacman_dy = 0;
+        req_dx = 0;
+        req_dy = 0;
+        dying = false;
+    }
 
 
     @Override
