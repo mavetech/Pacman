@@ -109,6 +109,58 @@ public class Model extends JPanel implements ActionListener {
         heart = new ImageIcon("/src/images/heart.png").getImage();
     }
 
+    private void playGame(Graphics g){
+        if(dying){
+            death();
+        }
+        else{
+            movePacman();
+            drawPacman();
+            moveGhosts();
+            checkMaze();
+        }
+
+    }
+
+    private void death() {
+    }
+
+    private void checkMaze() {
+    }
+
+    private void moveGhosts() {
+    }
+
+    private void drawPacman() {
+    }
+
+    private void movePacman() {
+    }
+
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        g.setColor(Color.black);
+        g.fillRect(0, 0, d.width, d.height);
+        drawMaze(g);
+        drawScore(g);
+        if(inGame){
+            playGame(g);
+        }
+        else{
+            showIntroScreen(g);
+        }
+        Toolkit.getDefaultToolkit().sync();
+    }
+
+    private void showIntroScreen(Graphics g) {
+    }
+
+    private void drawScore(Graphics g) {
+    }
+
+    private void drawMaze(Graphics g) {
+    }
+
     private void initVariables() {
         screenData = new short[N_BLOCKS * N_BLOCKS];
         d = new Dimension(400, 400);
