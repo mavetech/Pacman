@@ -135,6 +135,35 @@ public class Model extends JPanel implements ActionListener {
     }
 
     private void movePacman() {
+        int pos;
+        short ch;
+        if(pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0){
+            pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y/BLOCK_SIZE);
+            ch = screenData[pos];
+            if((ch & 16) != 0){
+                screenData[pos] = (short) (ch&15);
+                score++;
+            }
+            if(req_dx != 0 || req_dy!=0){
+                if(!(req_dx == -1 && req_dy==0 && (ch & 1) != 0)
+                    || (req_dy == 1 && req_dy == 0 && (ch & 4) != 0)
+                    || (req_dx == 0 && req_dy == -1 && (ch & 2) != 0)
+                    || (req_dx == 0 && req_dy == 1 && (ch & 8) != 0)){
+                        pacman_dx = req_dx;
+                        pacman_dy = req_dy;
+                }
+            }
+            if((pacman_x == -1 && pacman_y == 0 && (ch & 1) != 0)
+                ||(pacman_x == 1 && pacman_y == 0 && (ch & 4) != 0)
+                ||(pacman_x == 0 && pacman_y == -1 && (ch & 2) != 0)
+                ||(pacman_x == 0 && pacman_y == 1 && (ch & 8) != 0)){
+                pacman_x = 0;
+                pacman_y = 0;
+            }
+
+            pacman_x = pacman_x + PACMAN_SPEED * pacman_dx;
+            pacman_y = pacman_y + PACMAN_SPEED * pacman_dy;
+        }
     }
 
     public void paintComponent(Graphics g){
