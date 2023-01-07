@@ -58,7 +58,7 @@ public class Model extends JPanel implements ActionListener {
             17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 20,
             25, 24, 24, 24, 26, 24, 24, 24, 24, 24, 24, 24, 24, 24, 28
     };
-    
+
     public Model(){
         loadImages();
         initVariables();
@@ -101,15 +101,15 @@ public class Model extends JPanel implements ActionListener {
     }
 
     private void loadImages() {
-        down = new ImageIcon("/src/images/down.gif").getImage();
-        up = new ImageIcon("/src/images/up.gif").getImage();
-        left = new ImageIcon("/src/images/left.gif").getImage();
-        right = new ImageIcon("/src/images/right.gif").getImage();
-        ghost = new ImageIcon("/src/images/ghost.gif").getImage();
-        heart = new ImageIcon("/src/images/heart.png").getImage();
+        down = new ImageIcon("/Users/mafaquekhan/Documents/Personal/Pacman/src/src/images/down.gif").getImage();
+        up = new ImageIcon("/Users/mafaquekhan/Documents/Personal/Pacman/src/src/images/up.gif").getImage();
+        left = new ImageIcon("/Users/mafaquekhan/Documents/Personal/Pacman/src/src/images/left.gif").getImage();
+        right = new ImageIcon("/Users/mafaquekhan/Documents/Personal/Pacman/src/src/images/right.gif").getImage();
+        ghost = new ImageIcon("/Users/mafaquekhan/Documents/Personal/Pacman/src/src/images/ghost.gif").getImage();
+        heart = new ImageIcon("/Users/mafaquekhan/Documents/Personal/Pacman/src/src/images/heart.png").getImage();
     }
 
-    private void playGame(Graphics g){
+    private void playGame(Graphics2D g){
         if(dying){
             death();
         }
@@ -194,15 +194,15 @@ public class Model extends JPanel implements ActionListener {
                     if(count>3){
                         count = 3;
                     }
-                    ghost_dx[i] = -dx[count];
-                    ghost_dy[i] = -dy[count];
+                    ghost_dx[i] = dx[count];
+                    ghost_dy[i] = dy[count];
                 }
             }
             ghost_x[i] = ghost_x[i] + (ghost_dx[i] * ghostSpeed[i]);
             ghost_y[i] = ghost_y[i] + (ghost_dy[i] * ghostSpeed[i]);
             drawGhost(g, ghost_x[i] + 1, ghost_y[i] + 1);
             if(pacman_x > (ghost_x[i] - 12) && pacman_x < (ghost_x[i] + 12)
-                && (pacman_y > (ghost_y[i] -12)) && pacman_y < (ghost_y[i] +12) && inGame){
+                    && (pacman_y > (ghost_y[i] -12)) && pacman_y < (ghost_y[i] +12) && inGame){
                 dying = true;
             }
         }
@@ -228,59 +228,116 @@ public class Model extends JPanel implements ActionListener {
     }
 
     private void movePacman() {
+
         int pos;
         short ch;
-        if(pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0){
-            pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y/BLOCK_SIZE);
+
+        if (pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0) {
+            pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y / BLOCK_SIZE);
             ch = screenData[pos];
-            if((ch & 16) != 0){
-                screenData[pos] = (short) (ch&15);
+
+            if ((ch & 16) != 0) {
+                screenData[pos] = (short) (ch & 15);
                 score++;
             }
-            if(req_dx != 0 || req_dy!=0){
-                if(!(req_dx == -1 && req_dy==0 && (ch & 1) != 0)
-                    || (req_dy == 1 && req_dy == 0 && (ch & 4) != 0)
-                    || (req_dx == 0 && req_dy == -1 && (ch & 2) != 0)
-                    || (req_dx == 0 && req_dy == 1 && (ch & 8) != 0)){
-                        pacman_dx = req_dx;
-                        pacman_dy = req_dy;
+
+            if (req_dx != 0 || req_dy != 0) {
+                if (!((req_dx == -1 && req_dy == 0 && (ch & 1) != 0)
+                        || (req_dx == 1 && req_dy == 0 && (ch & 4) != 0)
+                        || (req_dx == 0 && req_dy == -1 && (ch & 2) != 0)
+                        || (req_dx == 0 && req_dy == 1 && (ch & 8) != 0))) {
+                    pacman_dx = req_dx;
+                    pacman_dy = req_dy;
                 }
             }
-            if((pacman_x == -1 && pacman_y == 0 && (ch & 1) != 0)
-                ||(pacman_x == 1 && pacman_y == 0 && (ch & 4) != 0)
-                ||(pacman_x == 0 && pacman_y == -1 && (ch & 2) != 0)
-                ||(pacman_x == 0 && pacman_y == 1 && (ch & 8) != 0)){
-                pacman_x = 0;
-                pacman_y = 0;
-            }
 
-            pacman_x = pacman_x + PACMAN_SPEED * pacman_dx;
-            pacman_y = pacman_y + PACMAN_SPEED * pacman_dy;
+            // Check for standstill
+            if ((pacman_dx == -1 && pacman_dy == 0 && (ch & 1) != 0)
+                    || (pacman_dx == 1 && pacman_dy == 0 && (ch & 4) != 0)
+                    || (pacman_dx == 0 && pacman_dy == -1 && (ch & 2) != 0)
+                    || (pacman_dx == 0 && pacman_dy == 1 && (ch & 8) != 0)) {
+                pacman_dx = 0;
+                pacman_dy = 0;
+            }
         }
+        pacman_x = pacman_x + PACMAN_SPEED * pacman_dx;
+        pacman_y = pacman_y + PACMAN_SPEED * pacman_dy;
     }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.setColor(Color.black);
-        g.fillRect(0, 0, d.width, d.height);
-        drawMaze(g);
-        drawScore(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.black);
+        g2d.fillRect(0, 0, d.width, d.height);
+        drawMaze(g2d);
+        drawScore(g2d);
         if(inGame){
-            playGame(g);
+            playGame(g2d);
         }
         else{
-            showIntroScreen(g);
+            showIntroScreen(g2d);
         }
         Toolkit.getDefaultToolkit().sync();
     }
 
-    private void showIntroScreen(Graphics g) {
+    private void showIntroScreen(Graphics2D g) {
+        String start = "Press Space to Start!";
+        g.setColor(Color.YELLOW);
+        g.drawString(start, SCREEN_SIZE/4, 150);
+
     }
 
     private void drawScore(Graphics g) {
+        g.setFont(smallFont);
+        g.setColor(new Color(5, 151, 79));
+        String s = "Score: "+score;
+        g.drawString(s, SCREEN_SIZE/2 + 96, SCREEN_SIZE + 16);
+        for(int i=0;i<lives;i++){
+            g.drawImage(heart, i*28, SCREEN_SIZE +1, this);
+        }
     }
 
-    private void drawMaze(Graphics g) {
+    private void drawMaze(Graphics2D g2d) {
+
+        short i = 0;
+        int x, y;
+
+        for (y = 0; y < SCREEN_SIZE; y += BLOCK_SIZE) {
+            for (x = 0; x < SCREEN_SIZE; x += BLOCK_SIZE) {
+
+                g2d.setColor(new Color(0,72,251));
+                g2d.setStroke(new BasicStroke(5));
+
+                if ((levelData[i] == 0)) {
+                    g2d.fillRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
+                }
+
+                if ((screenData[i] & 1) != 0) {
+                    g2d.drawLine(x, y, x, y + BLOCK_SIZE - 1);
+                }
+
+                if ((screenData[i] & 2) != 0) {
+                    g2d.drawLine(x, y, x + BLOCK_SIZE - 1, y);
+                }
+
+                if ((screenData[i] & 4) != 0) {
+                    g2d.drawLine(x + BLOCK_SIZE - 1, y, x + BLOCK_SIZE - 1,
+                            y + BLOCK_SIZE - 1);
+                }
+
+                if ((screenData[i] & 8) != 0) {
+                    g2d.drawLine(x, y + BLOCK_SIZE - 1, x + BLOCK_SIZE - 1,
+                            y + BLOCK_SIZE - 1);
+                }
+
+                if ((screenData[i] & 16) != 0) {
+                    g2d.setColor(new Color(255,255,255));
+                    g2d.fillOval(x + 10, y + 10, 6, 6);
+                }
+
+                i++;
+            }
+        }
     }
 
     private void initVariables() {
@@ -340,6 +397,6 @@ public class Model extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        repaint();
     }
 }
