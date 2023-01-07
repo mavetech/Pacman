@@ -123,9 +123,33 @@ public class Model extends JPanel implements ActionListener {
     }
 
     private void death() {
+        lives--;
+        if(lives == 0){
+            inGame = false;
+        }
+        continueLevel();
     }
 
     private void checkMaze() {
+        int i=0;
+        boolean finished = true;
+        while(i<N_BLOCKS * N_BLOCKS && finished){
+            if((screenData[i] & 48)!=0){
+                finished = false;
+            }
+            i++;
+        }
+        if(finished){
+            score+=50;
+            if(N_GHOSTS < MAX_GHOSTS){
+                N_GHOSTS++;
+            }
+            if(currentSpeed < maxSpeed){
+                currentSpeed++;
+            }
+            initLevel();
+        }
+
     }
 
     private void moveGhosts(Graphics g) {
